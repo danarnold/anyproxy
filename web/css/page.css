@@ -7,7 +7,7 @@ body, html {
 }
 
 .topHead{
-	height: 55px;
+	height: 53px;
 	position: relative;
 	border-bottom: 1px solid #333;
 }
@@ -15,14 +15,14 @@ body, html {
 .topHead .logoWrapper{
 	float: left;
 	width: 220px;
-	height: 55px;
+	height: 53px;
 	overflow: hidden;
 	position: relative;
 }
 
 .topHead .logoWrapper h1{
 	color: #333;
-	line-height: 55px;
+	line-height: 53px;
 	text-align: center;
 	margin: 0;
 }
@@ -63,10 +63,11 @@ body, html {
 
 .topHead .ctrlWrapper{
 	height        : 26px;
-	line-height   : 26px;
+	line-height   : 16px;
 	overflow      : hidden;
 	text-overflow : ellipsis;
 	white-space   : nowrap;
+	margin-top    : 1px;
 }
 
 .topHead .ctrlWrapper .sep{
@@ -76,10 +77,16 @@ body, html {
 }
 
 .topHead .topBtn{
-	margin-right: 8px;
+	margin-right: 4px;
 	transition:0.08s;
 	padding: 4px;
 	border-radius: 2px;
+	min-width: 50px;
+	display: inline-block;
+}
+
+.topHead .topBtn.topBtnInUse{
+	color: #30B630;
 }
 
 .topHead .topBtn:hover:not(.btn_disable){
@@ -94,6 +101,7 @@ body, html {
 
 .topHead i{
 	margin-right: 3px;
+	width: 12px;
 }
 
 .topHead .btn_disable{
@@ -178,6 +186,11 @@ body, html {
 	word-wrap:break-word;
 }
 
+.resBody .resBodyContent img{
+	max-width: 500px;
+	max-height: 500px;
+}
+
 .subTitle{
 	padding-left: 6px;
 	border-left: 3px solid #1FA2D6;
@@ -224,14 +237,13 @@ body, html {
 }
 
 .recordDetailOverlay li{
-	white-space: nowrap;
 	word-wrap: break-word;
 }
 
 .recordDetailOverlay iframe{
 	position: relative;
 	height: 92vh;
-	width: 100%; 
+	width: 100%;
 }
 
 .data_id{
@@ -287,7 +299,7 @@ body, html {
 	margin: 50px auto 0;
 }
 
-.filterSection form{
+.filterSection .uk-form{
 	text-align: center;
 }
 
@@ -305,7 +317,7 @@ body, html {
 	background-size: 100% 100%;
 }
 
-.mapWrapper form{
+.mapWrapper .form{
 	margin-top: 20px;
 }
 
@@ -346,4 +358,3 @@ body, html {
 
 
 /*map panel end*/
-

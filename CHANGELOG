@@ -1,3 +1,41 @@
+19 Nov: AnyProxy 3.8.1:
+
+    * bugfix for image content in web GUI
+
+16 Nov: AnyProxy 3.8.0:
+
+    * optimize the memory strategy
+
+2 Oct: AnyProxy 3.7.7:
+
+    * bugfix for proxy.close() ref #36
+
+9 Sep: AnyProxy 3.7.6:
+
+    * optimize detail panel, ref #35
+
+3 Sep: AnyProxy 3.7.5:
+
+    * bugfix for intercepting urls like http://a.com?url=http://b.com
+
+19 Aug: AnyProxy 3.7.4:
+
+    * bugfix for intercepting urls like http://a.com?url=http://b.com
+
+31 July: AnyProxy 3.7.3:
+
+    * show lastest 100 records when visit the web ui
+    * save map-local config file to local file
+    * show an indicator when filter or map-local is in use
+
+31 July: AnyProxy 3.7.2:
+
+    * bugfix for issue #29
+
+28 July: AnyProxy 3.7.1:
+
+    * fix a bug about deflate compression
+
 20 July: AnyProxy 3.7.0:
 
     * add a map-local panel on web ui, now you can easily map some request to your local files

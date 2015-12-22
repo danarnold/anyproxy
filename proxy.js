@@ -27,7 +27,6 @@ var http = require('http'),
     iconv           = require('iconv-lite'),
     Buffer          = require('buffer').Buffer;
 
-
 var T_TYPE_HTTP            = 0,
     T_TYPE_HTTPS           = 1,
     DEFAULT_PORT           = 8001,
@@ -38,20 +37,6 @@ var T_TYPE_HTTP            = 0,
     DEFAULT_TYPE           = T_TYPE_HTTP;
 
 var default_rule = require('./lib/rule_default');
-
-//may be unreliable in windows
-try{
-    var anyproxyHome = path.join(util.getUserHome(),"/.anyproxy/");
-    if(!fs.existsSync(anyproxyHome)){
-        fs.mkdirSync(anyproxyHome);
-    }
-    if(fs.existsSync(path.join(anyproxyHome,"rule_default.js"))){
-        default_rule = require(path.join(anyproxyHome,"rule_default"));
-    }
-    if(fs.existsSync(path.join(process.cwd(),'rule.js'))){
-        default_rule = require(path.join(process.cwd(),'rule'));
-    }
-}catch(e){}
 
 //option
 //option.type     : 'http'(default) or 'https'
@@ -78,18 +63,13 @@ function proxyServer(option){
         socketPort          = option.socketPort    || DEFAULT_WEBSOCKET_PORT, //port for websocket
         proxyConfigPort     = option.webConfigPort || DEFAULT_CONFIG_PORT,    //port to ui config server
         disableWebInterface = !!option.disableWebInterface,
-        ifSilent            = !!option.silent,
-        webServerInstance;
+        ifSilent            = !!option.silent;
 
     if(ifSilent){
         logUtil.setPrintStatus(false);
     }
 
-    if(option.dbFile){
-        GLOBAL.recorder = new Recorder({filename: option.dbFile});
-    }else{
-        GLOBAL.recorder = new Recorder();
-    }
+
 
     if(!!option.interceptHttps){
         default_rule.setInterceptFlag(true);
@@ -111,6 +91,18 @@ function proxyServer(option){
 
     async.series(
         [
+            //clear cache dir, prepare recorder
+            function(callback){
+                util.clearCacheDir(function(){
+                    if(option.dbFile){
+                        GLOBAL.recorder = new Recorder({filename: option.dbFile});
+                    }else{
+                        GLOBAL.recorder = new Recorder();
+                    }
+                    callback();
+                });
+            },
+
             //creat proxy server
             function(callback){
                 if(proxyType == T_TYPE_HTTPS){
@@ -145,8 +137,8 @@ function proxyServer(option){
 
             //start web socket service
             function(callback){
-                var ws = new wsServer({port : socketPort});
-                callback(null)
+                self.ws = new wsServer({port : socketPort});
+                callback(null);
             },
 
             //start web interface
@@ -161,7 +153,7 @@ function proxyServer(option){
                         ip           : ip.address()
                     };
 
-                    webServerInstance = new webInterface(config);
+                    self.webServerInstance = new webInterface(config);
                 }
                 callback(null);
             },
@@ -169,7 +161,6 @@ function proxyServer(option){
             //server status manager
             function(callback){
 
-                //kill web server when father process exits
                 process.on("exit",function(code){
                     logUtil.printLog('AnyProxy is about to exit with code: ' + code, logUtil.T_ERR);
                     process.exit();
@@ -204,10 +195,13 @@ function proxyServer(option){
 
     self.close = function(){
         self.httpProxyServer && self.httpProxyServer.close();
-        logUtil.printLog(color.green("server closed :" + proxyHost + ":" + proxyPort));
+        self.ws && self.ws.closeAll();
+        self.webServerInstance && self.webServerInstance.server && self.webServerInstance.server.close();
+        logUtil.printLog("server closed :" + proxyHost + ":" + proxyPort);
     }
 }
 
 module.exports.proxyServer        = proxyServer;
 module.exports.generateRootCA     = certMgr.generateRootCA;
 module.exports.isRootCAFileExists = certMgr.isRootCAFileExists;
+module.exports.setRules           = requestHandler.setRules;
